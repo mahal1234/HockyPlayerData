@@ -1,0 +1,228 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Hockey Player Detail</h2>
+
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <br />
+                <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">
+                            Name <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="Name" required="required" class="form-control col-md-7 col-xs-12" name="Name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">
+                            Position <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="Position" required="required" class="form-control col-md-7 col-xs-12" name="Position">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">
+                            Age <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="Age" required="required" class="form-control col-md-7 col-xs-12" name="Age">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">
+                            Mobile <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="Mobile" required="required" class="form-control col-md-7 col-xs-12" name="Mobile">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">
+                            Email <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="Email" required="required" class="form-control col-md-7 col-xs-12" name="Email">
+                        </div>
+                    </div>
+
+                    <div class="ln_solid"></div>
+                    <input type="hidden" id="ID" name="ID" />
+                    <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                            <button type="submit" class="btn btn-success" id="btn1">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Players List</h2>
+
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="table-responsive">
+                <table class="table table-striped jambo_table bulk_action" id="tab1">
+                    <tr class="headings">
+                        <th class="column-title" width="180px"># </th>
+                        <th class="column-title" width="380px">Name </th>
+                        <th class="column-title" width="180px">Position </th>
+                        <th class="column-title" width="180px">Age </th>
+                        <th class="column-title" width="180px">Mobile  </th>
+                        <th class="column-title" width="180px">Email  </th>
+                        <th class="column-title no-link last" width="240px">
+                            <span class="nobr">Action</span>
+                        </th>
+                    </tr>
+
+                </table>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function AddEditRecord(id, name, position,age, mobile,email) {
+        $("#Name").val(name);
+        $("#Position").val(fatherName);
+        $("#Age").val(age);
+        $("#Mobile").val(mobile);
+        $("#Email").val(email);
+        $("#ID").val(id);
+    }
+
+    function UpdateRecord() {
+        //alert("hi");
+        var Name = $("#Name").val();
+        var Position = $("#Position").val();
+        var Age = $("#Age").val();
+        var Mobile = $("#Mobile").val();
+        var Email = $("#Email").val();
+        $.ajax({
+            type: "put",
+            contentType: "application/json;charset=utf-8",
+            url: "/api/Players/" + $("#ID").val(),
+            data: JSON.stringify({
+                ID: $("#ID").val(),
+                Name: $("#Name").val(),
+                Position: $("#Position").val(),
+                Age: $("#Age").val(),
+                Mobile: $("#Mobile").val(),
+                Email: $("#Email").val()
+            }),
+
+            dataType: "JSON",
+
+            success: function (data) {
+                $("#tab1").find("tr:gt(0)").remove();
+                $.getJSON("/api/Players/", function (data) {
+                    $("#tab1").css("display", "block");
+                    $.each(data, function (key, val) {
+                        $("<tr class='even pointer'><td width='180px'>" + val.ID + "</td><td width='180px'>" + val.Name + "</td><td width='180px'>" + val.Position + "</td><td width='180px'>" + val.Age + "</td><td width='180px'>" + val.Mobile + "</td><td width='180px'>" + val.Email + "</td><td width='240px'>" + "<button class='btn btn-warning btn-xs' onclick='AddEditRecord(" + val.ID + ',"' + val.Name + '","' + val.Position + '","' + val.Age + '","' + val.Mobile + '","' + val.Email + '"' + ");'" + ">Edit</button> <button class='btn btn-danger btn-xs' onclick='DeleteRecord(" + val.ID + ");'" + ">Delete</button>" + "</td></tr>").appendTo($("#tab1"));
+
+                    })
+
+                })
+
+            }
+        });
+    }
+    //Delete
+    function DeleteRecord(ID) {
+        $.ajax({
+
+            type: "DELETE",
+
+            contentType: "application/json;charset=utf-8",
+
+            url: "/api/Players/" + ID,
+
+            data: JSON.stringify({
+                id: ID,
+            }),
+            dataType: "JSON",
+            success: function (data) {
+                $("#tab1").find("tr:gt(0)").remove();
+                $.getJSON("/api/Players/", function (data) {
+                    $("#tab1").css("display", "block");
+                    $.each(data, function (key, val) {
+                        $("<tr class='even pointer'><td width='180px'>" + val.ID + "</td><td width='180px'>" + val.Name + "</td><td width='180px'>" + val.Position + "</td><td width='180px'>" + val.Age + "</td><td width='180px'>" + val.Mobile + "</td><td width='180px'>" + val.Email + "</td><td width='240px'>" + "<button class='btn btn-warning btn-xs' onclick='AddEditRecord(" + val.ID + ',"' + val.Name + '","' + val.Position + '","' + val.Age + '","' + val.Mobile + '","' + val.Email + '"' + ");'" + ">Edit</button> <button class='btn btn-danger btn-xs' onclick='DeleteRecord(" + val.ID + ");'" + ">Delete</button>" + "</td></tr>").appendTo($("#tab1"));
+
+                    })
+
+                })
+            }
+        });
+    }
+    $(document).ready(function () {
+        $("#tab1").css("display", "none");
+        $.getJSON("/api/Players/", function (data) {
+            $("#tab1").css("display", "block");
+            $.each(data, function (key, val) {
+                $("<tr class='even pointer'><td width='180px'>" + val.ID + "</td><td width='180px'>" + val.Name + "</td><td width='180px'>" + val.Position + "</td><td width='180px'>" + val.Age + "</td><td width='180px'>" + val.Mobile + "</td><td width='180px'>" + val.Email + "</td><td width='240px'>" + "<button class='btn btn-warning btn-xs' onclick='AddEditRecord(" + val.ID + ',"' + val.Name + '","' + val.Position + '","' + val.Age + '","' + val.Mobile + '","' + val.Email + '"' + ");'" + ">Edit</button> <button class='btn btn-danger btn-xs' onclick='DeleteRecord(" + val.ID + ");'" + ">Delete</button>" + "</td></tr>").appendTo($("#tab1"));
+
+            });
+        })
+
+        //POST
+        $("#btn1").click(function () {
+            if ($("#ID").val() > 0) {
+                UpdateRecord();
+            }
+            else {
+                var Name = $("#Name").val();
+                var Position = $("#Position").val();
+                var Age = $("#Age").val();
+                var Mobile = $("#Mobile").val();
+                var Email = $("#Email").val();
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    url: "/api/Players/",
+                    data: JSON.stringify({
+                        Name: $("#Name").val(),
+                        Position: $("#Position").val(),
+                        Age: $("#Age").val(),
+                        Mobile: $("#Mobile").val(),
+                        Email: $("#Email").val(),
+                    }),
+                    dataType: "JSON",
+                    success: function (data) {
+                        $("#ID").val('');
+                        $("#tab1").find("tr:gt(0)").remove();
+                        $.getJSON("/api/Players/", function (data) {
+                            $("#tab1").css("display", "block");
+                            $.each(data, function (key, val) {
+                                $("<tr class='even pointer'><td width='180px'>" + val.ID + "</td><td width='180px'>" + val.Name + "</td><td width='180px'>" + val.Position + "</td><td width='180px'>" + val.Age + "</td><td width='180px'>" + val.Mobile + "</td><td width='180px'>" + val.Email + "</td><td width='240px'>" + "<button class='btn btn-warning btn-xs' onclick='AddEditRecord(" + val.ID + ',"' + val.Name + '","' + val.Position + '","' + val.Age + '","' + val.Mobile + '","' + val.Email + '"' + ");'" + ">Edit</button> <button class='btn btn-danger btn-xs' onclick='DeleteRecord(" + val.ID + ");'" + ">Delete</button>" + "</td></tr>").appendTo($("#tab1"));
+
+                            })
+
+                        })
+
+
+
+                    }
+                });
+            }
+
+        })
+    });
+
+</script>
